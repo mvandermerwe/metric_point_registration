@@ -3,6 +3,7 @@ import numpy as np
 import os
 import argparse
 import pdb
+import open3d
 from tqdm import tqdm
 
 import visualize as vis
