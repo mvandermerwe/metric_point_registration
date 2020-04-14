@@ -48,7 +48,8 @@ for mesh_name in meshes:
         if verbose:
             vis.visualize_points(pc1, show=True)
             vis.visualize_points(pc2, show=True)
-            vis.visualize_points(utils.transform_pointcloud(pc1, t_gt), show=True)
+            # vis.visualize_points(utils.transform_pointcloud(pc1, t_gt), show=True)
+            # vis.visualize_points_overlay([pc2, utils.transform_pointcloud(pc1, t_gt)], show=True)
 
         # HERE.
         # Use ICP to transform pc1 to pc2.
