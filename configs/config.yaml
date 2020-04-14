@@ -1,0 +1,17 @@
+data:
+  shapenet_dir: data/meshes/
+  out_dir: data/processed/
+  meshes:
+    - "ffccda82ecc0d0f71740529c616cd4c7" # Airplane mesh.
+  num_points: 1024
+  bound: 0.5
+  train_split: "train.lst"
+  val_split: "val.lst"
+  test_split: "test.lst"
+  num_train_transforms: 100000
+  num_test_transforms: 100
+  rotation_max: 1.57 # pi/2
+  translation_max: 0.5
+  pointcloud_file: points.npz
+  train_transforms_file: train_transforms.npz
+  test_transforms_file: test_transforms.npz
