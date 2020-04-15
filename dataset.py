@@ -21,8 +21,8 @@ class RegistrationDataset(Dataset):
             transform (callable, optional): optional transform on a sample.
         '''
 
-        self.pointcloud = np.load(pointcloud_file)['points']
-        self.transformations = np.load(transforms_file)['transforms']
+        self.pointcloud = np.load(pointcloud_file)['points'].astype(np.float32)
+        self.transformations = np.load(transforms_file)['transforms'].astype(np.float32)
         self.transform = transform
 
     def __len__(self):

@@ -16,7 +16,7 @@ class RegistrationNetwork(nn.Module):
         else:
             self.decoder = None
         
-        self.device = device
+        self._device = device
 
     def forward(self, pointcloud, **kwargs):
         '''
