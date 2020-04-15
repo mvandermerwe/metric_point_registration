@@ -9,7 +9,8 @@ import torch
 
 def load_config(config_file):
     with open(config_file, 'r') as f:
-        cfg = yaml.load(f)
+        # cfg = yaml.load(f, Loader=UnsafeLoader)
+        cfg = yaml.unsafe_load(f)
     return cfg
 
 def transform_pointcloud(points, t):
@@ -27,7 +28,7 @@ def array_to_transforms(array):
     a transformation.
     '''
     assert(array.shape[0]==12)
-    
+
     return array_to_transform(array[:6]), array_to_transform(array[6:])
 
 def array_to_transform(array):

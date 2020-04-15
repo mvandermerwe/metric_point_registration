@@ -3,6 +3,7 @@ import numpy as np
 import os
 import argparse
 import pdb
+import open3d as o3d
 from tqdm import tqdm
 
 import visualize as vis
@@ -26,7 +27,7 @@ for mesh_name in meshes:
     # Load the point cloud we will apply the transforms to.
     points_dict = np.load(os.path.join(data_folder, mesh_name, cfg['data']['pointcloud_file']))
     pointcloud = points_dict['points']
-    
+
     # Load the test transforms.
     test_transforms = np.load(os.path.join(data_folder, mesh_name, cfg['data']['test_transforms_file']))['transforms']
 
@@ -49,6 +50,24 @@ for mesh_name in meshes:
             vis.visualize_points(pc2, show=True)
             vis.visualize_points(utils.transform_pointcloud(pc1, t_gt), show=True)
 
-        # HERE.
         # Use ICP to transform pc1 to pc2.
-        
+        # Converting numpy array point clouds into open3d point cloud objects.
+        pc1_o3d = o3d.geometry.PointCloud()
+        pc1_o3d.points = o3d.utility.Vector3dVector(pc1)
+        pc2_o3d = o3d.geometry.PointCloud()
+        pc2_o3d.points = o3d.utility.Vector3dVector(pc2)
+        # Visualize using open3d with:
+        # o3d.visualization.draw_geometries([pc1_o3d])
+
+        # Maximum correspondence points-pair distance.
+        max_corr_dist = 0.02
+        # Use ICP to transform pc1 to pc2.
+        reg_result = o3d.registration.registration_icp(pc1_o3d, pc2_o3d, max_corr_dist)
+        # The transformation matrix is a 4x4 np array.
+        icp_trans = reg_result.transformation
+
+        if verbose:
+            # Transform p1 with ICP transformation, visualize target p2 and transformed p1
+            trans_pc1 = utils.transform_pointcloud(pc1, icp_trans)
+            point_sets = np.array([trans_pc1, pc2])
+            vis.visualize_points_overlay(point_sets, show=True)
