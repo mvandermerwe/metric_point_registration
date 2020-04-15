@@ -4,6 +4,8 @@ import os
 import argparse
 import pdb
 from tqdm import tqdm
+import torch
+import torch.utils.data as data
 
 import visualize as vis
 import utils
@@ -27,7 +29,11 @@ train_dataset = dataset.RegistrationDataset(
     os.path.join(data_folder, mesh, cfg['data']['pointcloud_file']),
     os.path.join(data_folder, mesh, cfg['data']['train_transforms_file'])
 )
+train_dataloader = data.DataLoader(
+    train_dataset,
+    batch_size = cfg['training']['batch_size'],
+    shuffle = cfg['training']['shuffle']
+)
 
-for i in range(len(train_dataset)):
-    sample = train_dataset[i]
-    vis.visualize_points(sample['points'], show=True)
+for batch in train_dataloader:
+    vis.visualize_points(batch['points'][0], show=True)

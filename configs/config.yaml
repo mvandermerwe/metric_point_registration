@@ -15,3 +15,6 @@ data:
   pointcloud_file: points.npz
   train_transforms_file: train_transforms.npz
   test_transforms_file: test_transforms.npz
+training:
+  batch_size: 32
+  shuffle: true
