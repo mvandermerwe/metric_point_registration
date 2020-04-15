@@ -70,7 +70,7 @@ def get_transform_between(t1, t2):
     t1 and t2 should be w.r.t a common frame, which will
     be used for the resulting transform.
     '''
-    return inverse_transform(inverse_transform(t1) @ t2)
+    return np.matmul(t2, inverse_transform(t1))
 
 def chamfer_distance(pc_A, pc_B, device=None):
     pc_A = torch.from_numpy(pc_A).to(device).float()

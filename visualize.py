@@ -20,6 +20,7 @@ def visualize_points(points, bound=0.5, c=None, out_file=None, show=False):
         plt.savefig(out_file)
     if show:
         plt.show()
+    plt.close(fig)
 
 def visualize_points_overlay(point_sets, bound=0.5, out_file=None, show=False):
     ''' Visualizes a set of points by overlaying w/ different colors.
@@ -41,6 +42,7 @@ def visualize_points_overlay(point_sets, bound=0.5, out_file=None, show=False):
     ax.set_xlim3d(-bound, bound)
     ax.set_ylim3d(-bound, bound)
     ax.set_zlim3d(-bound, bound)
+    ax.view_init(elev=30, azim=45)    
 
     if out_file is not None:
         plt.savefig(out_file)

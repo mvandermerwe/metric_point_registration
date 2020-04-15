@@ -15,3 +15,24 @@ data:
   pointcloud_file: points.npz
   train_transforms_file: train_transforms.npz
   test_transforms_file: test_transforms.npz
+  validation_transforms_file: validation_transforms.npz
+  visualize_transforms_file: visualize_transforms.npz  
+model:
+  c_dim: 128
+  dim: 3
+  hidden_dim: 512
+training:
+  out_dir: out/reconstruction_model/
+  epochs: 100
+  batch_size: 32
+  shuffle: true
+  learning_rate: 0.0001
+  visualize_every: 500
+  validate_every: 1000
+  print_every: 20
+  backup_every: 500
+align:
+  vis_dir: out/reconstruction_align/
+  vis_every: 20
+  max_iters: 1000
+  epsilon: 0.0001

@@ -62,7 +62,13 @@ for mesh_name in tqdm(meshes):
 
     np.savez(os.path.join(mesh_out_dir, cfg['data']['train_transforms_file']), transforms=transforms)
 
-    # Generate test transformations:
+    # Generate validation transformations:
+    transforms = np.random.random([num_test_transforms, 6])
+    transforms[:,:3] = transforms[:,:3] * rotation_max
+    transforms[:,3:] = transforms[:,3:] * translation_max
+    np.savez(os.path.join(mesh_out_dir, cfg['data']['validation_transforms_file']), transforms=transforms)
+
+    # Generate test transformations.
     transforms = np.random.random([num_test_transforms, 12])
 
     # Scale rotational and translational components.
