@@ -15,6 +15,11 @@ data:
   pointcloud_file: points.npz
   train_transforms_file: train_transforms.npz
   test_transforms_file: test_transforms.npz
+model:
+  c_dim: 128
+  dim: 3
+  hidden_dim: 512
 training:
+  epochs: 100
   batch_size: 32
   shuffle: true
