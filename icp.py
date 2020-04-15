@@ -50,7 +50,6 @@ for mesh_name in meshes:
             vis.visualize_points(pc2, show=True)
             vis.visualize_points(utils.transform_pointcloud(pc1, t_gt), show=True)
 
-        # Use ICP to transform pc1 to pc2.
         # Converting numpy array point clouds into open3d point cloud objects.
         pc1_o3d = o3d.geometry.PointCloud()
         pc1_o3d.points = o3d.utility.Vector3dVector(pc1)
@@ -67,7 +66,7 @@ for mesh_name in meshes:
         icp_trans = reg_result.transformation
 
         if verbose:
-            # Transform p1 with ICP transformation, visualize target p2 and transformed p1
+            # Transform p1 with ICP transformation, visualize target p2 and transformed p1.
             trans_pc1 = utils.transform_pointcloud(pc1, icp_trans)
             point_sets = np.array([trans_pc1, pc2])
             vis.visualize_points_overlay(point_sets, show=True)
