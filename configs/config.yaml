@@ -33,6 +33,6 @@ training:
   backup_every: 500
 align:
   vis_dir: out/reconstruction_align/
-  vis_every: 20
+  vis_every: 50
   max_iters: 1000
-  epsilon: 0.0001
+  epsilon: 1e-10

@@ -9,8 +9,7 @@ import torch
 
 def load_config(config_file):
     with open(config_file, 'r') as f:
-        # cfg = yaml.load(f, Loader=UnsafeLoader)
-        cfg = yaml.unsafe_load(f)
+        cfg = yaml.load(f)
     return cfg
 
 def transform_pointcloud(points, t):

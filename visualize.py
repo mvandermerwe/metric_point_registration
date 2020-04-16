@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from vtkplotter import *
 
 def visualize_points(points, bound=0.5, c=None, out_file=None, show=False):
     fig = plt.figure()
@@ -49,3 +50,18 @@ def visualize_points_overlay(point_sets, bound=0.5, out_file=None, show=False):
     if show:
         plt.show()
     plt.close(fig)
+
+if __name__ == '__main__':
+    mesh = 'data/processed/ffccda82ecc0d0f71740529c616cd4c7/mesh.obj'
+    pointcloud = 'data/processed/ffccda82ecc0d0f71740529c616cd4c7/points.npz'
+    points = np.load(pointcloud)['points']
+
+    vp = Plotter(N=2, verbose=0)
+
+    plane_mesh = vp.load(mesh, c='grey')
+    vp.show(plane_mesh, at=0)
+
+    points = Points(points, c='b')
+    vp.show(points, at=1)
+
+    vp.show(interactive=1)

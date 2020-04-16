@@ -1,4 +1,5 @@
 import trimesh
+import time
 import numpy as np
 import os
 import sys
@@ -7,6 +8,7 @@ import pdb
 from tqdm import tqdm, trange
 import torch
 import torch.optim as optim
+import kaolin
 
 import visualize as vis
 import utils
@@ -31,7 +33,7 @@ out_dir = cfg['training']['out_dir']
 vis_dir = cfg['align']['vis_dir']
 vis_every = cfg['align']['vis_every']
 max_iters = cfg['align']['max_iters']
-epsilon = cfg['align']['epsilon']
+epsilon = float(cfg['align']['epsilon'])
 is_cuda = (torch.cuda.is_available() and not args.no_cuda)
 device = torch.device("cuda" if is_cuda else "cpu")
 
@@ -76,7 +78,16 @@ for mesh_name in meshes:
     # Load the test transforms.
     test_transforms = np.load(os.path.join(data_folder, mesh_name, cfg['data']['test_transforms_file']))['transforms']
 
+    # Record information on optimization runs.
+    times = []
+    chamfer_distances = []
+    gt_cloud_distances = []
+    latent_distances = []
+    iterations = []
+    
+    # for i in tqdm([52]):
     for i in trange(test_transforms.shape[0]):
+    
         # Make vis directory.
         vis_dir_i = os.path.join(vis_dir, 'align_%03d' % i)
         if not os.path.exists(vis_dir_i):
@@ -110,9 +121,10 @@ for mesh_name in meshes:
         optimizer = optim.Adam([rodrigues, translation], lr=0.01)
 
         if verbose:
-            vis.visualize_points(pc1, show=True)
-            vis.visualize_points(pc2, show=True)
-        
+            vis.visualize_points_overlay([pc1, pc2], out_file=os.path.join(vis_dir_i, 'start.png'))
+
+        start = time.time()
+            
         for i in range(max_iters):
             optimizer.zero_grad()
 
@@ -128,9 +140,36 @@ for mesh_name in meshes:
 
             optimizer.step()
 
-            if (i % vis_every) == 0:
+            if (i % vis_every) == 0 and verbose:
                 vis.visualize_points_overlay([pc2, result_dict['p'].squeeze(0).detach().cpu()],
                                              out_file=os.path.join(vis_dir_i, 'align_%03d' % i))
 
             if (loss_c < epsilon):
                 break
+
+        end = time.time()
+        opt_time = end - start
+
+        rotation_matrix = lie.SO3_exp(rodrigues)
+        transform_pc1 = torch.transpose(torch.matmul(rotation_matrix, torch.transpose(pc1_cuda[0], 0, 1)), 0, 1) + translation
+
+        c_d = kaolin.metrics.point.chamfer_distance(pc2_cuda[0].to(device), transform_pc1.to(device))
+
+        gt_cloud_distance = torch.nn.MSELoss()(pc2_cuda[0].to(device), transform_pc1.to(device)).item()
+
+        times.append(opt_time)
+        chamfer_distances.append(c_d.item())
+        latent_distances.append(loss_c.item())
+        gt_cloud_distances.append(gt_cloud_distance)
+        iterations.append(i)
+
+        if verbose:
+            point_sets = np.array([transform_pc1.detach().cpu().numpy(), pc2])
+            vis.visualize_points_overlay(point_sets, out_file=os.path.join(vis_dir_i, 'result_model.png'))
+
+    np.savez(os.path.join(vis_dir, 'results.npz'),
+             times=np.array(times),
+             chamfer_distances=np.array(chamfer_distances),
+             gt_cloud_distances=np.array(gt_cloud_distances),
+             latent_distances=np.array(latent_distances),
+             iterations=np.array(iterations))
